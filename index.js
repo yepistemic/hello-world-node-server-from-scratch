@@ -5,21 +5,10 @@ const StringDecoder = require("string_decoder").StringDecoder;
 const fs = require("fs");
 const config = require("./config");
 
-// method that handle responses
-const handlers = {
-  hello: (data, callback) => {
-    callback(200, { hello: "world" });
-  },
-  notFound: (data, callback) => {
-    callback(404);
-  }
-};
 
-const router = {
-  hello: handlers.hello,
-  notFound: handlers.notFound
-};
-
+/*
+ *  HTTP Server
+ */
 const httpServer = http.createServer((req, res) => {
   unifiedServer(req, res);
 });
@@ -28,6 +17,10 @@ httpServer.listen(config.httpPort, () => {
   console.log("HTTP Server listening on port", config.httpPort);
 });
 
+
+/*
+ *  HTTPS Server
+ */
 const httpsServerOptions = {
   key: fs.readFileSync("./https/key.pem"),
   cert: fs.readFileSync("./https/cert.pem")
@@ -41,6 +34,12 @@ httpsServer.listen(config.httpsPort, () => {
   console.log("HTTPS Server listening on port", config.httpsPort);
 });
 
+
+/*
+ *  Unified Server
+ *  A function that encapsulates the shared logic of the https and http server.
+ *  This is where the real meat is.
+ */
 const unifiedServer = (req, res) => {
   // url: /hello/hi?q=402
   const parsedUrl = url.parse(req.url, true);
@@ -94,4 +93,22 @@ const unifiedServer = (req, res) => {
       res.end(payloadString);
     });
   });
+};
+
+
+/*
+ *  Routing and Endpoint handlers
+ */
+const handlers = {
+  hello: (data, callback) => {
+    callback(200, { hello: "world" });
+  },
+  notFound: (data, callback) => {
+    callback(404);
+  }
+};
+
+const router = {
+  hello: handlers.hello,
+  notFound: handlers.notFound
 };
