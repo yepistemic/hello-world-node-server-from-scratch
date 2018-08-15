@@ -1,9 +1,47 @@
 const http = require("http");
+const https = require("https");
 const url = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
+const fs = require("fs");
 const config = require("./config");
 
+// method that handle responses
+const handlers = {
+  hello: (data, callback) => {
+    callback(200, { hello: "world" });
+  },
+  notFound: (data, callback) => {
+    callback(404);
+  }
+};
+
+const router = {
+  hello: handlers.hello,
+  notFound: handlers.notFound
+};
+
 const httpServer = http.createServer((req, res) => {
+  unifiedServer(req, res);
+});
+
+httpServer.listen(config.httpPort, () => {
+  console.log("HTTP Server listening on port", config.httpPort);
+});
+
+const httpsServerOptions = {
+  key: fs.readFileSync("./https/key.pem"),
+  cert: fs.readFileSync("./https/cert.pem")
+};
+
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+  unifiedServer(req, res);
+});
+
+httpsServer.listen(config.httpsPort, () => {
+  console.log("HTTPS Server listening on port", config.httpsPort);
+});
+
+const unifiedServer = (req, res) => {
   // url: /hello/hi?q=402
   const parsedUrl = url.parse(req.url, true);
 
@@ -56,28 +94,4 @@ const httpServer = http.createServer((req, res) => {
       res.end(payloadString);
     });
   });
-});
-
-// method that handle responses
-const handlers = {
-  hello: (data, callback) => {
-    callback(200, { hello: "world" });
-  },
-  notFound: (data, callback) => {
-    callback(404);
-  }
 };
-
-const router = {
-  hello: handlers.hello,
-  notFound: handlers.notFound
-};
-
-httpServer.listen(config.port, () => {
-  console.log(
-    "listening on port",
-    config.port,
-    "in environment",
-    config.envName
-  );
-});
