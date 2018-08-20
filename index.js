@@ -4,6 +4,8 @@ const url = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
 const fs = require("fs");
 const config = require("./config");
+const handlers = require("./lib/handlers");
+const helpers = require("./lib/helpers");
 
 /*
  *  HTTP Server
@@ -34,10 +36,10 @@ httpsServer.listen(config.httpsPort, () => {
 
 /**
  * A server handler for HTTPs and HTTP servers.
- * @param  {request} request  A node request object
- * @param  {response} response A node response object
+ * @param  {request} req  A node request object
+ * @param  {response} res A node response object
  */
-const unifiedServer = (request, response) => {
+const unifiedServer = (req, res) => {
   // url: /hello/hi?q=402
   const parsedUrl = url.parse(req.url, true);
 
@@ -49,7 +51,7 @@ const unifiedServer = (request, response) => {
   const queryStringObject = parsedUrl.query;
 
   // method
-  const method = req.method;
+  const method = req.method.toLowerCase();
 
   // headers
   const headers = req.headers;
@@ -76,7 +78,7 @@ const unifiedServer = (request, response) => {
       queryStringObject,
       method,
       headers,
-      payload: buffer
+      payload: helpers.parseJsonToObject(buffer)
     };
 
     chosenHandler(data, (statusCode, payload) => {
@@ -92,19 +94,8 @@ const unifiedServer = (request, response) => {
   });
 };
 
-/*
- *  Routing and Endpoint handlers
- */
-const handlers = {
-  hello: (data, callback) => {
-    callback(200, { hello: "world" });
-  },
-  notFound: (data, callback) => {
-    callback(404);
-  }
-};
-
 const router = {
   hello: handlers.hello,
-  notFound: handlers.notFound
+  notFound: handlers.notFound,
+  users: handlers.users
 };
