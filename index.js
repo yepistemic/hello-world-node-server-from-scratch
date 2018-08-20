@@ -5,7 +5,6 @@ const StringDecoder = require("string_decoder").StringDecoder;
 const fs = require("fs");
 const config = require("./config");
 
-
 /*
  *  HTTP Server
  */
@@ -16,7 +15,6 @@ const httpServer = http.createServer((req, res) => {
 httpServer.listen(config.httpPort, () => {
   console.log("HTTP Server listening on port", config.httpPort);
 });
-
 
 /*
  *  HTTPS Server
@@ -34,13 +32,12 @@ httpsServer.listen(config.httpsPort, () => {
   console.log("HTTPS Server listening on port", config.httpsPort);
 });
 
-
-/*
- *  Unified Server
- *  A function that encapsulates the shared logic of the https and http server.
- *  This is where the real meat is.
+/**
+ * A server handler for HTTPs and HTTP servers.
+ * @param  {request} request  A node request object
+ * @param  {response} response A node response object
  */
-const unifiedServer = (req, res) => {
+const unifiedServer = (request, response) => {
   // url: /hello/hi?q=402
   const parsedUrl = url.parse(req.url, true);
 
@@ -94,7 +91,6 @@ const unifiedServer = (req, res) => {
     });
   });
 };
-
 
 /*
  *  Routing and Endpoint handlers
