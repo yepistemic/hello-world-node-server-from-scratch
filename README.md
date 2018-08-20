@@ -1,11 +1,12 @@
-# hello world node server from scratch
+# node server from scratch
+An exercise is Node development.
 
 ## Installation and Running
 
 First clone the repository and cd into the directory
 ```
-$ git clone https://github.com/yepistemic/hello-world-node-server-from-scratch
-$ cd hello-world-node-server-from-scratch
+$ git clone https://github.com/yepistemic/node-server-from-scratch
+$ cd node-server-from-scratch
 ```
 
 Then generate an SSL certificate for the HTTPS server and fill out the information
