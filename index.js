@@ -97,5 +97,6 @@ const unifiedServer = (req, res) => {
 const router = {
   hello: handlers.hello,
   notFound: handlers.notFound,
-  users: handlers.users
+  users: handlers.users,
+  tokens: handlers.tokens
 };
